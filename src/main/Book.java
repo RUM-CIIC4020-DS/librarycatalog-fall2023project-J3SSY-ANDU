@@ -3,42 +3,57 @@ package main;
 import java.time.LocalDate;
 
 public class Book {
+	private int ID;
+	private String title;
+	private String author;
+	private String genre;
+	private LocalDate lastCheckOut;
+	private boolean checkedOut;
+	
+	public Book(int ID, String title, String author, String genre, LocalDate lastCheckOut, boolean checkedOut) {
+		this.ID = ID;
+		this.title = title;
+		this.author = author;
+		this.genre = genre;
+		this.lastCheckOut = lastCheckOut;
+		this.checkedOut = checkedOut;
+	}
 	
 	public int getId() {
-		return -10;
+		return this.ID;
 	}
 	public void setId(int id) {
-		
+		this.ID = id;
 	}
 	public String getTitle() {
-		return "";
+		return this.title;
 	}
 	public void setTitle(String title) {
-		
+		this.title = title;
 	}
 	public String getAuthor() {
-		return "";
+		return this.author;
 	}
 	public void setAuthor(String author) {
-		
+		this.author = author;
 	}
 	public String getGenre() {
-		return "";
+		return this.genre;
 	}
 	public void setGenre(String genre) {
-		
+		this.genre = genre;
 	}
 	public LocalDate getLastCheckOut() {
-		return null;
+		return this.lastCheckOut;
 	}
 	public void setLastCheckOut(LocalDate lastCheckOut) {
-		
+		this.lastCheckOut = lastCheckOut;
 	}
 	public boolean isCheckedOut() {
-		return false;
+		return this.checkedOut;
 	}
 	public void setCheckedOut(boolean checkedOut) {
-		
+		this.checkedOut = checkedOut;
 	}
 	
 	@Override
@@ -50,12 +65,21 @@ public class Book {
 		 * 
 		 * Both the title and author are in uppercase.
 		 */
-		return "";
+		String title = this.title.toUpperCase();
+		String author = this.author.toUpperCase();
+		return title + " BY " + author;
 	}
 	public float calculateFees() {
 		/*
 		 * fee (if applicable) = base fee + 1.5 per additional day
 		 */
-		return -1000;
+//		se pregunta si isCheckedOut es true para entonces calcular el fee si el libro lleva fuera 31 dias o mas 
+		LocalDate todayDate = LocalDate.of(2023, 9, 15);
+		float result = 0;
+		if (todayDate.getDayOfYear() >= this.lastCheckOut.getDayOfYear() + 31 && this.isCheckedOut()) {
+			float addedDays = todayDate.getDayOfYear() - this.lastCheckOut.getDayOfYear();
+			result = (float) (10.0 + (1.50 * (addedDays - 31)));
+		}
+		return result;
 	}
 }
