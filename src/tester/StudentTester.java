@@ -38,7 +38,7 @@ public class StudentTester {
 		assertTrue("Failed to create Book and User Lists correctly.", LC.getBookCatalog().size() == 50 && LC.getUsers().size() == 30);
 	}
 	@Test
-	public void testAddBook() {
+	public void testAddBook() throws IOException {
 		LC.addBook("My Personal Biography", "G Bonilla", "Classics");
 		LC.addBook("Coder's Guide to Failing", "G Bonilla", "Adventure");
 		
@@ -54,7 +54,7 @@ public class StudentTester {
 		
 	}
 	@Test
-	public void removeBook() {
+	public void removeBook() throws IOException {
 		boolean isThere = this.findBookById(this.LC.getBookCatalog(), 16) != null;
 		LC.removeBook(16);
 		boolean notThere = this.findBookById(this.LC.getBookCatalog(), 16) == null;
@@ -62,14 +62,14 @@ public class StudentTester {
 				+ "Could also be that it was never there to begin with.", isThere && notThere);
 	}
 	@Test
-	public void testCheckOutBook() {
+	public void testCheckOutBook() throws IOException {
 		boolean success = LC.checkOutBook(19);
 		boolean failure = !LC.checkOutBook(20);
 		assertTrue("Failed to checkout a book that ISN'T checked out (id = 19). Should return true"
 				+ "or failed to not checkout a book that IS already checked out (id = 20). Should return false", success && failure);
 	}
 	@Test
-	public void testReturnBook() {
+	public void testReturnBook() throws IOException {
 		boolean success = LC.returnBook(20);
 		boolean failure = !LC.returnBook(19);
 		assertTrue("Failed to return a book that IS currently checked out (id = 20) should be true "

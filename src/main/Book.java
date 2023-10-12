@@ -76,8 +76,21 @@ public class Book {
 //		se pregunta si isCheckedOut es true para entonces calcular el fee si el libro lleva fuera 31 dias o mas 
 		LocalDate todayDate = LocalDate.of(2023, 9, 15);
 		float result = 0;
-		if (todayDate.getDayOfYear() >= this.lastCheckOut.getDayOfYear() + 31 && this.isCheckedOut()) {
-			float addedDays = todayDate.getDayOfYear() - this.lastCheckOut.getDayOfYear();
+		float addedDays = 0;
+		
+		if (this.isCheckedOut()) {
+			if (todayDate.getYear() != this.getLastCheckOut().getYear()) {
+				int years = todayDate.getYear() - this.getLastCheckOut().getYear();
+				addedDays += 365 * years;
+			}
+			if (todayDate.getDayOfYear() >= this.lastCheckOut.getDayOfYear() + 31 || todayDate.getYear() != this.getLastCheckOut().getYear()) {
+				addedDays += todayDate.getDayOfYear() - this.lastCheckOut.getDayOfYear();
+			} else if (todayDate.getDayOfYear() <= this.lastCheckOut.getDayOfYear() + 31 && todayDate.getYear() != this.getLastCheckOut().getYear()) {
+				addedDays += todayDate.getDayOfYear() - this.lastCheckOut.getDayOfYear();
+			}
+		}
+		if (addedDays == 0) result = 0;
+		else {
 			result = (float) (10.0 + (1.50 * (addedDays - 31)));
 		}
 		return result;

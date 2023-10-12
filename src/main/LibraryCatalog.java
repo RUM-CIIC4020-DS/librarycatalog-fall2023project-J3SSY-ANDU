@@ -210,8 +210,79 @@ public class LibraryCatalog {
 		}
 		return count;
 	}
+	
+	public int booksPerGenre(String genre) {
+		int count = 0;
+		for (Book val : this.getBookCatalog()) {
+			if (val.getGenre().equals(genre)) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	@SuppressWarnings("unused")
+	public int totalBooks() {
+		int count = 0;
+		for (Book book : this.getBookCatalog()) {
+			count++;
+		}
+		return count;
+	}
+	
+	public String booksCheckedOut() {
+		String books = "";
+		for (Book book : this.getBookCatalog()) {
+			if (book.isCheckedOut()) {
+				books += book + "\n";
+			}
+		}
+		return books;
+	}
+	
+	public int totalCheckedOutBooks() {
+		int count = 0;
+		for (Book book : this.getBookCatalog()) {
+			if (book.isCheckedOut()) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public float userTotalFees(User user) {
+		float sum = 0;
+		for (Book book : user.getCheckedOutList()) {
+			sum += book.calculateFees();
+		}
+		return sum;
+	}
+	
+	public String usersWithLateFees() {
+		String users = "";
+		for (User user : this.getUsers()) {
+			if (!user.getCheckedOutList().isEmpty()) {
+				float fees = userTotalFees(user);
+				users += user.getName() + "\t\t\t\t\t$" + String.format("%.02f",fees) + "\n"; 
+			}
+		}
+		return users;
+	}
+	
+	public float totalFees() {
+		float sum = 0;
+		for (User user : this.getUsers()) {
+			if (!user.getCheckedOutList().isEmpty()) {
+				for (Book book : user.getCheckedOutList()) {
+					sum += book.calculateFees();
+				}
+			}
+		}
+		return sum;
+	}
+	
+	
 	public void generateReport() throws IOException {
-		
 		String output = "\t\t\t\tREPORT\n\n";
 		output += "\t\tSUMMARY OF BOOKS\n";
 		output += "GENRE\t\t\t\t\t\tAMOUNT\n";
@@ -226,13 +297,13 @@ public class LibraryCatalog {
 		 * How you do the count is up to you. You can make a method, use the searchForBooks()
 		 * function or just do the count right here.
 		 */
-		output += "Adventure\t\t\t\t\t" + (/*Place here the amount of adventure books*/) + "\n";
-		output += "Fiction\t\t\t\t\t\t" + (/*Place here the amount of fiction books*/) + "\n";
-		output += "Classics\t\t\t\t\t" + (/*Place here the amount of classics books*/) + "\n";
-		output += "Mystery\t\t\t\t\t\t" + (/*Place here the amount of mystery books*/) + "\n";
-		output += "Science Fiction\t\t\t\t\t" + (/*Place here the amount of science fiction books*/) + "\n";
+		output += "Adventure\t\t\t\t\t" + (booksPerGenre("Adventure")) + "\n";
+		output += "Fiction\t\t\t\t\t\t" + (booksPerGenre("Fiction")) + "\n";
+		output += "Classics\t\t\t\t\t" + (booksPerGenre("Classics")) + "\n";
+		output += "Mystery\t\t\t\t\t\t" + (booksPerGenre("Mystery")) + "\n";
+		output += "Science Fiction\t\t\t\t\t" + (booksPerGenre("Science Fiction")) + "\n";
 		output += "====================================================\n";
-		output += "\t\t\tTOTAL AMOUNT OF BOOKS\t" + (/*Place here the total number of books*/) + "\n\n";
+		output += "\t\t\tTOTAL AMOUNT OF BOOKS\t" + (totalBooks()) + "\n\n";
 		
 		/*
 		 * This part prints the books that are currently checked out
@@ -247,10 +318,11 @@ public class LibraryCatalog {
 		 * 
 		 * PLACE CODE HERE
 		 */
+		output += booksCheckedOut();
 		
 		
 		output += "====================================================\n";
-		output += "\t\t\tTOTAL AMOUNT OF BOOKS\t" (/*Place here the total number of books that are checked out*/) + "\n\n";
+		output += "\t\t\tTOTAL AMOUNT OF BOOKS\t" + (totalCheckedOutBooks()) + "\n\n";
 		
 		
 		/*
@@ -272,10 +344,10 @@ public class LibraryCatalog {
 		 * 
 		 * PLACE CODE HERE!
 		 */
-
+		output += usersWithLateFees();
 			
 		output += "====================================================\n";
-		output += "\t\t\t\tTOTAL DUE\t$" + (/*Place here the total amount of money owed to the library.*/) + "\n\n\n";
+		output += "\t\t\t\tTOTAL DUE\t$" + (String.format("%.02f", totalFees())) + "\n\n\n";
 		output += "\n\n";
 		System.out.println(output);// You can use this for testing to see if the report is as expected.
 		
@@ -286,7 +358,13 @@ public class LibraryCatalog {
 		 * 
 		 * PLACE CODE HERE!!
 		 */
-		
+		String reportName = "report/report.txt";
+		File report = new File(reportName);
+		FileWriter reportWriter = new FileWriter(report);
+		BufferedWriter reportBuffered = new BufferedWriter(reportWriter);
+		reportBuffered.write(output);
+		reportBuffered.close();
+		reportWriter.close();
 	}
 	
 	/*
