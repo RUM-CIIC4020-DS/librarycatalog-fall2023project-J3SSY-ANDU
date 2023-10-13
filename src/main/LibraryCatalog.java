@@ -107,13 +107,12 @@ public class LibraryCatalog {
 		BufferedWriter newCatalogFile = new BufferedWriter(newFile);
 		String header = catalogFile.readLine();
 		newCatalogFile.write(header);
-		newCatalogFile.newLine();
 		String line = catalogFile.readLine();
 		while (line != null) {
 			String[] bookInfoArray = line.split(",");
 			if (Integer.parseInt(bookInfoArray[0]) != id) {
-				newCatalogFile.write(line);
 				newCatalogFile.newLine();
+				newCatalogFile.write(line);
 			}
 			line = catalogFile.readLine();
 		}
@@ -136,7 +135,6 @@ public class LibraryCatalog {
 		BufferedWriter newCatalogFile = new BufferedWriter(newFile);
 		String header = catalogFile.readLine();
 		newCatalogFile.write(header);
-		newCatalogFile.newLine();
 		String line = catalogFile.readLine();
 		boolean result = false;
 		while (line != null) {
@@ -149,8 +147,8 @@ public class LibraryCatalog {
 					result = true;
 				}
 			}
-			newCatalogFile.write(line);
 			newCatalogFile.newLine();
+			newCatalogFile.write(line);
 			line = catalogFile.readLine();
 		}
 		catalogFile.close();
@@ -170,7 +168,6 @@ public class LibraryCatalog {
 		BufferedWriter newCatalogFile = new BufferedWriter(newFile);
 		String header = catalogFile.readLine();
 		newCatalogFile.write(header);
-		newCatalogFile.newLine();
 		String line = catalogFile.readLine();
 		boolean result = false;
 		while (line != null) {
@@ -182,8 +179,8 @@ public class LibraryCatalog {
 					result = true;
 				}
 			}
-			newCatalogFile.write(line);
 			newCatalogFile.newLine();
+			newCatalogFile.write(line);
 			line = catalogFile.readLine();
 		}
 		catalogFile.close();
@@ -196,7 +193,7 @@ public class LibraryCatalog {
 	public boolean getBookAvailability(int id) {
 		for (Book val : this.getBookCatalog()) {
 			if (val.getId() == id) {
-				return val.isCheckedOut();
+				return !val.isCheckedOut();
 			}
 		}
 		return false;
