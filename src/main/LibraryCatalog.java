@@ -15,14 +15,32 @@ import data_structures.SinglyLinkedList;
 import interfaces.FilterFunction;
 import interfaces.List;
 
+
+/**
+ * @author jessy
+ * @version 10/13/2023
+ */
 public class LibraryCatalog {
 	
-		
+	/**
+	 * No parameter Constructor	
+	 * @throws IOException file existence, etc...
+	 */
 	public LibraryCatalog() throws IOException {
 		this.getBooksFromFiles();
 		this.getUsersFromFiles();
 	}
+	
+	/**
+	 * private variable that reads from the catalog.csv file and create a List of Books
+	 * @return List of Books
+	 * @throws IOException file related errors
+	 */
 	private List<Book> getBooksFromFiles() throws IOException {
+		/**
+		 * Se lee el catalog.csv y se guardan los datos de los libros en un ArrayList()
+		 * Porque add() es O(1)
+		 */
 		List<Book> bookList = new ArrayList<Book>();
 		FileReader catalog = new FileReader("data/catalog.csv");
 		BufferedReader in = new BufferedReader(catalog);
@@ -40,7 +58,17 @@ public class LibraryCatalog {
 		return bookList;
 	}
 	
+	/**
+	 * private variable that reads from the user.csv file and create a List of Books
+	 * @return List of users
+	 * @throws IOException file related errors
+	 */
 	private List<User> getUsersFromFiles() throws IOException {
+		/**
+		 * Se lee el user.csv y se guardan los datos de los users en un ArrayList()
+		 * Se utiliza ArrayList() en ambas listas: userList y bookArrayList
+		 * Porque get y add son O(1)
+		 */
 		List<User> userList = new ArrayList<User>();
 		FileReader userFile = new FileReader("data/user.csv");
 		BufferedReader in = new BufferedReader(userFile);
@@ -68,6 +96,11 @@ public class LibraryCatalog {
 		in.close();
 		return userList;
 	}
+	
+	/**
+	 * getBookFromFiles getter
+	 * @return List of Books in catalog.csv file
+	 */
 	public List<Book> getBookCatalog() {
 		try {
 			return this.getBooksFromFiles();
@@ -77,6 +110,11 @@ public class LibraryCatalog {
 		}
 		return null;
 	}
+	
+	/**
+	 * getUsersFromFiles getter
+	 * @return List of Users in user.csv file
+	 */
 	public List<User> getUsers() {
 		try {
 			return this.getUsersFromFiles();
@@ -86,7 +124,21 @@ public class LibraryCatalog {
 		}
 		return null;
 	}
+	
+	/**
+	 * This method adds a book to the catalog of our library
+	 * @param title new Book's title
+	 * @param author new Book's author 
+	 * @param genre new Book's genre
+	 * @throws IOException file related errors
+	 */
 	public void addBook(String title, String author, String genre) throws IOException {
+		/**
+		 * Se rellena el libro con los valores predeterminados en la fecha y checkedOut
+		 * Se calcula el id sumando 1 al size del catalogo
+		 * Se utiliza true dentro de FileWriter para activar modo append en vez de write
+		 * Se utilizan el resto de valores del libro con los valores de los parametros
+		 */
 		LocalDate date = LocalDate.of(2023, 9, 15);
 		int newBookId = this.getBookCatalog().size()+1;		
 		FileWriter file = new FileWriter("data/catalog.csv", true);
@@ -96,7 +148,18 @@ public class LibraryCatalog {
 		catalogFile.close();
 		return;
 	}
+	
+	/**
+	 * This method removes a book from the library catalog
+	 * @param id ID's book to remove
+	 * @throws IOException file related errors
+	 */
 	public void removeBook(int id) throws IOException {
+		/**
+		 * Se lee catalog.csv y se crea y se escribe un nuevo file que copia catalog.csv sin el libro 
+		 * con el id pasado por parametro
+		 * Al final se borra el file anterior y se renombra el nuevo file con el nombre del anterior
+		 */
 		String catalogFileName = "data/catalog.csv";
 		String tempFile = "data/temp.csv";
 		File oldF = new File(catalogFileName);
@@ -123,7 +186,18 @@ public class LibraryCatalog {
 		return;
 	}	
 	
+	/**
+	 * This method checks-out a book from the catalog and updates the information of the book
+	 * @param id ID's book to checks-out
+	 * @return true if the book can be checkedOut or false if the book cannot be checkedOut or doesn't exist
+	 * @throws IOException file related errors
+	 */
 	public boolean checkOutBook(int id) throws IOException {
+		/**
+		 * Se lee catalog.csv y a la misma vez se crea y se escribe un nuevo file que guarda el catalogo
+		 * buscando el libro con el mismo id que el parametro y se cambia checkedOut a true si es false y 
+		 * se devuelve true o si el libro no esta o es true, se devuelve false
+		 */
 		String checkOutDate = "2023-09-15";
 		String catalogFileName = "data/catalog.csv";
 		String tempFile = "data/temp.csv";
@@ -157,7 +231,20 @@ public class LibraryCatalog {
 		newF.renameTo(new File(catalogFileName));
 		return result;
 	}
+	
+	/**
+	 * This method returns a book to the catalog and updates it's information
+	 * @param id ID's book to return
+	 * @return true if the book is returned to the catalog or false if the book is already returned or doesn't exist 
+	 * @throws IOException file related errors
+	 */
 	public boolean returnBook(int id) throws IOException {
+		/**
+		 * Se lee catalog.csv y a la misma vez se crea y se escribe un nuevo file que guarda el catalogo
+		 * buscando el libro con el mismo id que el parametro y se cambia checkedOut a false si es true y 
+		 * se devuelve true o si el libro no esta o es false, se devuelve false
+		 * Al final se borra el file anterior y se renombra el nuevo file con el nombre del anterior
+		 */
 		String catalogFileName = "data/catalog.csv";
 		String tempFile = "data/temp.csv";
 		File oldF = new File(catalogFileName);
@@ -190,7 +277,15 @@ public class LibraryCatalog {
 		return result;
 	}
 	
+	/**
+	 * This method checks if a book is available to checkout
+	 * @param id ID's book to check availability
+	 * @return true if the book is in the catalog and false if the book is not available
+	 */
 	public boolean getBookAvailability(int id) {
+		/**
+		 * Se itera por el catalogo hasta encontrar el libro con el mismo id que el parametro
+		 */
 		for (Book val : this.getBookCatalog()) {
 			if (val.getId() == id) {
 				return !val.isCheckedOut();
@@ -198,7 +293,17 @@ public class LibraryCatalog {
 		}
 		return false;
 	}
+	
+	/**
+	 * This method count how many books with specific title are in the catalog
+	 * @param title title's book to count
+	 * @return the count of the books
+	 */
 	public int bookCount(String title) {
+		/**
+		 * Se itera por el catalogo buscando los libros con el title igual al parametro
+		 * y se devuelve la cuenta de todos estos
+		 */
 		int count = 0;
 		for (Book val : this.getBookCatalog()) {
 			if (val.getTitle().equals(title)) {
@@ -208,7 +313,16 @@ public class LibraryCatalog {
 		return count;
 	}
 	
+	/**
+	 * This method count how many books with specific genre are in the catalog
+	 * @param genre genre of the book to count
+	 * @return the count of the books
+	 */
 	public int booksPerGenre(String genre) {
+		/**
+		 * Se itera por el catalogo buscando los libros con el genre igual al parametro
+		 * y se devuelve la cuenta de todos estos
+		 */
 		int count = 0;
 		for (Book val : this.getBookCatalog()) {
 			if (val.getGenre().equals(genre)) {
@@ -218,16 +332,24 @@ public class LibraryCatalog {
 		return count;
 	}
 	
+	/**
+	 * The total count of the books in the catalog
+	 * @return catalog size
+	 */
 	@SuppressWarnings("unused")
 	public int totalBooks() {
-		int count = 0;
-		for (Book book : this.getBookCatalog()) {
-			count++;
-		}
-		return count;
+		return this.getBookCatalog().size();
 	}
 	
+	/**
+	 * This method returns a string of all the books that are checkeOut
+	 * @return books checked out
+	 */
 	public String booksCheckedOut() {
+		/**
+		 * Se busca por el catalogo los libros checkedOut y se devuelven
+		 * en un String utilizando el metodo toString() de cada libro
+		 */
 		String books = "";
 		for (Book book : this.getBookCatalog()) {
 			if (book.isCheckedOut()) {
@@ -237,7 +359,15 @@ public class LibraryCatalog {
 		return books;
 	}
 	
+	/**
+	 * This method counts the check out books
+	 * @return count of the books
+	 */
 	public int totalCheckedOutBooks() {
+		/**
+		 * Se busca en el catalogo los libros que esten checkedOut, se cuentan
+		 * y se devuelve el total
+		 */
 		int count = 0;
 		for (Book book : this.getBookCatalog()) {
 			if (book.isCheckedOut()) {
@@ -247,7 +377,16 @@ public class LibraryCatalog {
 		return count;
 	}
 	
+	/**
+	 * This method calculates all the fees that are due to the library by specific user
+	 * @param user user
+	 * @return sum of all the fees of specific user
+	 */
 	public float userTotalFees(User user) {
+		/**
+		 * Se obtiene un user y se itera por checkedOutList y sumamos los fees de cada libro 
+		 * para obtener el total de fees por user
+		 */
 		float sum = 0;
 		for (Book book : user.getCheckedOutList()) {
 			sum += book.calculateFees();
@@ -255,7 +394,16 @@ public class LibraryCatalog {
 		return sum;
 	}
 	
+	/**
+	 * This method returns a string with all the users that owes late fees with their total fees
+	 * @return string with users and total fees per user
+	 */
 	public String usersWithLateFees() {
+		/**
+		 * Buscamos en la lista de user a los user que tengas libros checkedOut
+		 * y utilizamos el metodo userTotalFees para calcular los fees por user
+		 * y devolvemos un String con los nombres de los users con sus respectivos fees
+		 */
 		String users = "";
 		for (User user : this.getUsers()) {
 			if (!user.getCheckedOutList().isEmpty()) {
@@ -266,7 +414,15 @@ public class LibraryCatalog {
 		return users;
 	}
 	
+	/**
+	 * This method calculates all the fees that are due to the library by every user
+	 * @return sum of fees
+	 */
 	public float totalFees() {
+		/**
+		 * Buscamos por la lista de users los users que tengan libros checkedOut
+		 * y calculamos los fees por libro y sumamos el total de fees 
+		 */
 		float sum = 0;
 		for (User user : this.getUsers()) {
 			if (!user.getCheckedOutList().isEmpty()) {
@@ -278,7 +434,10 @@ public class LibraryCatalog {
 		return sum;
 	}
 	
-	
+	/**
+	 * This method generates a report with all the most important info of the different users and catalog
+	 * @throws IOException file related erros
+	 */
 	public void generateReport() throws IOException {
 		String output = "\t\t\t\tREPORT\n\n";
 		output += "\t\tSUMMARY OF BOOKS\n";
@@ -370,12 +529,41 @@ public class LibraryCatalog {
 	 * You are not required to implement these, but they can be useful for
 	 * other parts of the project.
 	 */
+	
+	/**
+	 * Search for books that qualify for the FilterFunction condition
+	 * @param func FilterFunction
+	 * @return List of Books
+	 */
 	public List<Book> searchForBook(FilterFunction<Book> func) {
-		return null;
+		/** 
+		 * Elegí utilizar ArrayList() para utilizar add() y tener complejidad de tiempo O(1) al añadirlo al final
+		 */
+		List<Book> list = new ArrayList<Book>();
+		for (Book book : this.getBookCatalog()) {
+			if (func.filter(book)) {
+				list.add(book);
+			}
+		}
+		return list;
 	}
 	
+	/**
+	 * Search for users that qualify for the FilterFunction condition
+	 * @param func FilterFunction
+	 * @return List of Users
+	 */
 	public List<User> searchForUsers(FilterFunction<User> func) {
-		return null;
+		/** 
+		 * Elegí utilizar ArrayList() para utilizar add() y tener complejidad de tiempo O(1) al añadirlo al final
+		 */
+		List<User> list = new ArrayList<User>();
+		for (User user : this.getUsers()) {
+			if (func.filter(user)) {
+				list.add(user);
+			}
+		}
+		return list;
 	}
 	
 }
